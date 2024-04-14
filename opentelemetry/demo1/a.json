@@ -1,0 +1,74 @@
+{
+"Name": "roll",
+"SpanContext": {
+"TraceID": "2a04a0c11d4ed6625a24c714a21eb117",
+"SpanID": "fefa264bb1933a72",
+"TraceFlags": "01",
+"TraceState": "",
+"Remote": false
+},
+"Parent": {
+"TraceID": "2a04a0c11d4ed6625a24c714a21eb117",
+"SpanID": "316b600eefc4dae1",
+"TraceFlags": "01",
+"TraceState": "",
+"Remote": false
+},
+"SpanKind": 1,
+"StartTime": "2024-03-03T22:44:11.271014+08:00",
+"EndTime": "2024-03-03T22:44:11.271066167+08:00",
+"Attributes": [
+{
+"Key": "roll.value",
+"Value": {
+"Type": "INT64",
+"Value": 5
+}
+}
+],
+"Events": null,
+"Links": null,
+"Status": {
+"Code": "Unset",
+"Description": ""
+},
+"DroppedAttributes": 0,
+"DroppedEvents": 0,
+"DroppedLinks": 0,
+"ChildSpanCount": 0,
+"Resource": [
+{
+"Key": "service.name",
+"Value": {
+"Type": "STRING",
+"Value": "unknown_service:___go_build_dice"
+}
+},
+{
+"Key": "telemetry.sdk.language",
+"Value": {
+"Type": "STRING",
+"Value": "go"
+}
+},
+{
+"Key": "telemetry.sdk.name",
+"Value": {
+"Type": "STRING",
+"Value": "opentelemetry"
+}
+},
+{
+"Key": "telemetry.sdk.version",
+"Value": {
+"Type": "STRING",
+"Value": "1.24.0"
+}
+}
+],
+"InstrumentationLibrary": {
+"Name": "rolldice",
+"Version": "",
+"SchemaURL": ""
+}
+}

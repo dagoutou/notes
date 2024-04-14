@@ -43,5 +43,4 @@ func InitTraceProvider(url string) func(context.Context) error {
 		otel.SetTextMapPropagator(propagation.Baggage{})
 		return provider.Shutdown
 	}
-
 }

@@ -1,12 +1,19 @@
 package main
 
 import (
+	"bytes"
 	"context"
 	"demo/provider"
+	"encoding/json"
+	"errors"
 	"fmt"
 	"go.opentelemetry.io/otel"
 	"go.opentelemetry.io/otel/attribute"
+	"go.opentelemetry.io/otel/codes"
 	"go.opentelemetry.io/otel/trace"
+	"log"
+	"time"
+	"unsafe"
 )
 
 type database struct {
@@ -49,56 +56,59 @@ func main() {
 	defer func() {
 		shoutdown(ctx)
 	}()
-	//tracer := otel.Tracer("my_test")
-	//instanceStruct := instance{
-	//	ID:       123,
-	//	Category: []string{"category1", "category2"},
-	//	Usefor:   []string{"usefor1", "usefor2"},
-	//	Account:  []interface{}{"account1", "account2"},
-	//	Data: data{
-	//		IP:            "192.168.1.1",
-	//		Name:          "John Doe",
-	//		MonitorStatus: true,
-	//		AuditStatus:   false,
-	//	},
-	//	Status:  true,
-	//	Network: "network1",
-	//}
-	//var buff bytes.Buffer
-	//en := json.NewEncoder(&buff)
-	//err := en.Encode(instanceStruct)
-	//if err != nil {
-	//	log.Fatal(err)
-	//	return
-	//}
-	//str1 := buff.String()
-	//size1 := unsafe.Sizeof(str1)
-	//fmt.Println(size1)
-	//marshal, err := json.Marshal(instanceStruct)
-	//if err != nil {
-	//	log.Fatal(err)
-	//	return
-	//}
-	//str := string(marshal)
-	//size2 := unsafe.Sizeof(str)
-	//fmt.Println(size2)
-	//ctx, span := tracer.Start(ctx, "example-span",
-	//	trace.WithAttributes(
-	//		attribute.String("icarus_request_parameters", str),
-	//	),
-	//)
-	//defer span.End()
+	tracer := otel.Tracer("my_test")
+	instanceStruct := instance{
+		ID:       123,
+		Category: []string{"category1", "category2"},
+		Usefor:   []string{"usefor1", "usefor2"},
+		Account:  []interface{}{"account1", "account2"},
+		Data: data{
+			IP:            "192.168.1.1",
+			Name:          "John Doe",
+			MonitorStatus: true,
+			AuditStatus:   false,
+		},
+		Status:  true,
+		Network: "network1",
+	}
+	var buff bytes.Buffer
+	en := json.NewEncoder(&buff)
+	err := en.Encode(instanceStruct)
+	if err != nil {
+		log.Fatal(err)
+		return
+	}
+	str1 := buff.String()
+	size1 := unsafe.Sizeof(str1)
+	fmt.Println(size1)
+	marshal, err := json.Marshal(instanceStruct)
+	if err != nil {
+		log.Fatal(err)
+		return
+	}
+	str := string(marshal)
+	size2 := unsafe.Sizeof(str)
+	fmt.Println(size2)
+	ctx, span := tracer.Start(ctx, "example-span",
+		trace.WithAttributes(
+			attribute.String("icarus_request_parameters", str),
+		),
+	)
+	err = errors.New("发生了错误！")
+	span.RecordError(err, trace.WithTimestamp(time.Now()), trace.WithAttributes(attribute.String("icarus_request_parameters", str)))
+	span.SetStatus(codes.Error, "aaa")
+	defer span.End()
 
-	tracer := otel.Tracer("example")
-
-	ctx, parentSpan := tracer.Start(ctx, "parent-span")
-
-	// 在不同的方法中传递 Trace 的上下文
-	method1(ctx)
-	method2(ctx)
-
-	// 结束父 Span
-	parentSpan.End()
+	//tracer := otel.Tracer("example")
+	//
+	//ctx, parentSpan := tracer.Start(ctx, "parent-span")
+	//
+	//// 在不同的方法中传递 Trace 的上下文
+	//method1(ctx)
+	//method2(ctx)
+	//
+	//// 结束父 Span
+	//parentSpan.End()
 
 	fmt.Println("Spans completed")
 }

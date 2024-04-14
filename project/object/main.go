@@ -1,17 +1,34 @@
 package main
 
-import "fmt"
+import (
+	"fmt"
+	"net/http"
+	"sync"
+	"time"
+)
 
 func main() {
-	c := canary{
-		base: base{"金丝雀"},
-		name: "金丝雀A",
+	var wg sync.WaitGroup
+	for i := 0; i < 1000; i++ {
+		wg.Add(1)
+		go request("127.0.0.1:8080", &wg)
 	}
-	cr := crow{base: base{"乌鸦"},
-		name: "乌鸦A",
+	wg.Wait()
+}
+func request(url string, wg *sync.WaitGroup) {
+	i := 0
+	for {
+		if _, err := http.Get(url); err == nil {
+			break
+		}
+		i++
+		if i >= 3 {
+			fmt.Println("aaa")
+			break
+		}
+		time.Sleep(time.Second)
 	}
-	info(c)
-	info(cr)
+	wg.Done()
 }
 
 type base struct {
